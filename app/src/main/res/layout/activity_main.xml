@@ -6,30 +6,44 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <androidx.appcompat.widget.Toolbar
+    <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolBar"
+        android:elevation="1dp"
+        app:title="Notes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/searchView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:title="Notes" />
+        android:layout_below="@id/toolBar" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
+        android:padding="@dimen/_3sdp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/toolBar"
-        android:layout_marginTop="@dimen/_12sdp"
+        android:layout_below="@id/searchView"
         app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
         app:spanCount="2" />
 
+    <ImageView
+        android:id="@+id/empty_banner"
+        android:layout_centerInParent="true"
+        android:layout_width="@dimen/_150sdp"
+        android:src="@drawable/empty_list"
+        android:layout_height="@dimen/_150sdp"/>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_btn"
-        android:layout_alignParentBottom="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        app:backgroundTint="@color/purple_200"
-        android:src="@drawable/ic_baseline_add_24"
+        android:layout_alignParentBottom="true"
         android:layout_marginEnd="@dimen/_24sdp"
         android:layout_marginBottom="@dimen/_24sdp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:src="@drawable/ic_baseline_add_24"
+        app:backgroundTint="@color/purple_200" />
 
 </RelativeLayout>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/_3sdp"
+    android:paddingBottom="@dimen/_6sdp"
+    android:paddingStart="@dimen/_6sdp"
+    android:paddingTop="@dimen/_6sdp"
+    android:paddingEnd="@dimen/_6sdp"
+    android:id="@+id/parentLay"
+    android:background="@drawable/round_background"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:id="@+id/title_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/raleway_semibold"
+        android:lineSpacingExtra="4dp"
+        android:maxLines="2"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:textColor="@color/dark_grey"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        tools:text="Sampath is a good boy" />
+
+    <TextView
+        android:id="@+id/description_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title_text"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/raleway_medium"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:layout_marginBottom="@dimen/_4sdp"
+        android:textColor="@color/dark_grey1"
+        android:textSize="12sp"
+        android:textStyle="italic"
+        tools:text="ksdkfdfm" />
+
+</RelativeLayout>

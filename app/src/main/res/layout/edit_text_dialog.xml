@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="@dimen/_12sdp"
+    android:orientation="vertical"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/title_lbl"
+        android:text="Customize"
+        android:fontFamily="@font/raleway_semibold"
+        android:textSize="16sp"
+        android:textColor="@color/dark_purple"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:id="@+id/layout"
+        android:layout_below="@id/title_lbl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_lbl"
+            android:text="Text: "
+            android:textSize="14sp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:fontFamily="@font/raleway_semibold"
+            android:textColor="@color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/note_text"
+            android:textSize="14sp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:fontFamily="@font/raleway_semibold"
+            android:textColor="@color/dark_grey2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+    </LinearLayout>
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/start_index"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:hint="Start Index"
+        android:inputType="number"
+        android:textColor="@color/black"
+        android:textColorHint="#A2A2A2" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/end_index"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/start_index"
+        android:layout_marginStart="@dimen/_12sdp"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:layout_toEndOf="@id/start_index"
+        android:hint="End Index"
+        android:inputType="number"
+        android:textColor="@color/black"
+        android:textColorHint="#A2A2A2" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/menu"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@id/end_index"
+        android:layout_marginStart="@dimen/_12sdp"
+        app:hintAnimationEnabled="true"
+        android:layout_alignBottom="@id/start_index"
+        android:layout_height="wrap_content">
+
+        <AutoCompleteTextView
+            android:id="@+id/drop_down"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_34sdp"
+            android:hint="Style"
+            android:inputType="none"
+            android:textSize="8sp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/positive_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/end_index"
+        android:layout_alignParentEnd="true"
+        android:textAllCaps="false"
+        android:layout_marginTop="@dimen/_24sdp"
+        android:text="Continue" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/negative_btn"
+        android:textAllCaps="false"
+        android:layout_marginEnd="@dimen/_12sdp"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_below="@id/end_index"
+        android:layout_toStartOf="@id/positive_btn"
+        android:layout_marginTop="@dimen/_24sdp"
+        android:text="No"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+
+</RelativeLayout>
