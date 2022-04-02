@@ -20,6 +20,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.text.HtmlCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.pratilipitask.MainActivity
+import com.example.pratilipitask.R
 import com.example.pratilipitask.data.database.ContentDatabase
 import com.example.pratilipitask.data.repo.DataRepo
 import com.example.pratilipitask.databinding.ActivityAddBinding
@@ -93,7 +94,10 @@ class AddActivity() : AppCompatActivity(), CoroutineScope {
                 list.forEach{ data->
                     if(data.id == noteId) {
                         binding.dataTitle.setText(data.title.fromHtml())
-                        binding.dataDesc.setText(data.description?.fromHtml())
+                        data.description?.fromHtml()?.apply {
+                            if(isBlank()) binding.dataDesc.setHint(R.string.desc_hint)
+                            else binding.dataDesc.setText(this)
+                        }
 
                         binding.deleteBtn.setOnClickListener {
                             MaterialAlertDialogBuilder(this@AddActivity)

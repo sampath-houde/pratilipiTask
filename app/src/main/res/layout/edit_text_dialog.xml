@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:padding="@dimen/_12sdp"
     android:orientation="vertical"
     android:layout_height="match_parent">
@@ -93,14 +94,60 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:layout_below="@id/menu"
+        android:orientation="horizontal"
+        android:weightSum="4"
+        tools:visibility="visible"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatRadioButton
+            android:id="@+id/radio1"
+            android:text="Red"
+            android:layout_weight="1"
+            android:checked="true"
+            android:buttonTint="#FF0000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <androidx.appcompat.widget.AppCompatRadioButton
+            android:id="@+id/radio2"
+            android:text="Blue"
+            android:layout_weight="1"
+            android:buttonTint="#3F51B5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <androidx.appcompat.widget.AppCompatRadioButton
+            android:id="@+id/radio3"
+            android:text="Purple"
+            android:layout_weight="1"
+            android:buttonTint="#9C27B0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <androidx.appcompat.widget.AppCompatRadioButton
+            android:id="@+id/radio4"
+            android:text="Green"
+            android:layout_weight="1"
+            android:buttonTint="#4CAF50"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </RadioGroup>
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/positive_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/end_index"
+        android:layout_below="@id/radioGroup"
         android:layout_alignParentEnd="true"
         android:textAllCaps="false"
-        android:layout_marginTop="@dimen/_24sdp"
+        android:layout_marginTop="@dimen/_14sdp"
         android:text="Continue" />
 
     <com.google.android.material.button.MaterialButton
@@ -108,9 +155,9 @@
         android:textAllCaps="false"
         android:layout_marginEnd="@dimen/_12sdp"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_below="@id/end_index"
+        android:layout_below="@id/radioGroup"
         android:layout_toStartOf="@id/positive_btn"
-        android:layout_marginTop="@dimen/_24sdp"
+        android:layout_marginTop="@dimen/_14sdp"
         android:text="No"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>

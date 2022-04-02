@@ -8,4 +8,6 @@
         android:title="Underline" />
     <item android:id="@+id/strikethrough"
         android:title="Strikethrough" />
+    <item   android:id="@+id/color"
+        android:title="Color"/>
 </menu>

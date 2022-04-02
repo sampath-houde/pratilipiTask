@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">pratilipitask</string>
+    <string name="desc_hint">Type Description...</string>
 </resources>
