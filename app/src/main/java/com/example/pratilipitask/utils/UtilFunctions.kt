@@ -3,8 +3,13 @@ package com.example.pratilipitask.utils
 import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.text.Editable
+import android.text.Html
+import android.text.Spanned
 import android.view.View
 import android.widget.Toast
+import androidx.core.text.HtmlCompat
 import androidx.room.TypeConverter
 import java.io.ByteArrayOutputStream
 
@@ -30,8 +35,33 @@ object UtilFunctions {
         else View.VISIBLE
     }
 
+    fun Editable.toHtml(): String? {
+        return Html.toHtml(this)
+    }
+
+    fun String.fromHtml(): Spanned {
+        return HtmlCompat.fromHtml(this, HtmlCompat.FROM_HTML_MODE_COMPACT)
+    }
+
     fun View.toast(message: String) {
         Toast.makeText(this.context, message, Toast.LENGTH_SHORT).show()
+    }
+
+    fun Activity.toast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    fun Bitmap.resize(newWidth: Float, newHeight: Float): Bitmap? {
+        val width: Int = this.width
+        val height: Int = this.height
+        val scaleWidth = newWidth / width
+        val scaleHeight = newHeight / height
+        val matrix = Matrix()
+        matrix.postScale(scaleWidth, scaleHeight)
+        val resizedBitmap = Bitmap.createBitmap(
+            this, 0, 0, width, height, matrix, false)
+        this.recycle()
+        return resizedBitmap
     }
 
 

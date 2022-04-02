@@ -1,9 +1,23 @@
 package com.example.pratilipitask.ui.activity
 
+import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
+import android.text.Html
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.ImageSpan
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
+import androidx.core.text.HtmlCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.pratilipitask.MainActivity
 import com.example.pratilipitask.data.database.ContentDatabase
@@ -13,27 +27,55 @@ import com.example.pratilipitask.ui.ui_utils.StyleDialog
 import com.example.pratilipitask.ui.viewmodels.DataViewModel
 import com.example.pratilipitask.utils.Constants
 import com.example.pratilipitask.utils.DatabaseViewModelFactory
+import com.example.pratilipitask.utils.UtilFunctions.fromHtml
+import com.example.pratilipitask.utils.UtilFunctions.resize
+import com.example.pratilipitask.utils.UtilFunctions.toHtml
+import com.example.pratilipitask.utils.UtilFunctions.toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
-class AddActivity : AppCompatActivity() {
+class AddActivity() : AppCompatActivity(), CoroutineScope {
 
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
+
+
+    private lateinit var job: Job
     private lateinit var binding: ActivityAddBinding
     private lateinit var viewModel: DataViewModel
     private var noteId = -1L
-    var isBold = false
-    var oldString = ""
+    private var bitmap: Bitmap? = null
+
+    private var resultLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+
+        val stream = contentResolver.openInputStream(uri!!)
+        val image = BitmapFactory.decodeStream(stream)
+        val spanImage = ImageSpan(image!!, ImageSpan.ALIGN_BASELINE)
+
+        val spannable = SpannableStringBuilder(binding.dataDesc.text).apply {
+            setSpan(spanImage, 0,1, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+        }
+        binding.dataDesc.text = spannable
+
+    }
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        oldString = binding.dataTitle.text.toString()
+        job = Job()
 
-        initData()
+
+        init()
         initClickListeners()
-
-
 
 
         noteId = intent.getLongExtra(Constants.INTENT_NOTE_ID, -1L)
@@ -46,45 +88,41 @@ class AddActivity : AppCompatActivity() {
 
     private fun loadNote(noteId: Long) {
         viewModel.fetchData()
-        viewModel.readAllData.observe(this) {list->
-            list.forEach{data->
-                if(data.id == noteId) {
-                    binding.dataTitle.setText(data.title)
-                    binding.dataDesc.setText(data.description)
+        launch {
+            viewModel.readAllData.collect {list->
+                list.forEach{ data->
+                    if(data.id == noteId) {
+                        binding.dataTitle.setText(data.title.fromHtml())
+                        binding.dataDesc.setText(data.description?.fromHtml())
 
-                    binding.deleteBtn.setOnClickListener {
-                        MaterialAlertDialogBuilder(this)
-                            .setTitle("Delete")
-                            .setMessage("Do you want to delete?")
-                            .setPositiveButton("Yes"
-                            ) { _, _ ->
-                                viewModel.deleteData(data)
-                                finish()
-                            }
-                            .setNegativeButton("No") { p0, _ -> p0?.dismiss() }
-                            .show()
+                        binding.deleteBtn.setOnClickListener {
+                            MaterialAlertDialogBuilder(this@AddActivity)
+                                .setTitle("Delete")
+                                .setMessage("Do you want to delete?")
+                                .setPositiveButton("Yes"
+                                ) { _, _ ->
+                                    viewModel.deleteData(data)
+                                    finish()
+                                }
+                                .setNegativeButton("No") { p0, _ -> p0?.dismiss() }
+                                .show()
+                        }
                     }
                 }
             }
         }
+
     }
 
     private fun initClickListeners() {
 
-
-
         binding.saveBtn.setOnClickListener {
+            onBackPressed()
+        }
 
-            val title = binding.dataTitle.text.toString().trim()
-            val description = binding.dataDesc.text.toString().trim()
-
-
-            if(title.isNullOrEmpty()) binding.dataTitle.error = "Title cannot be empty"
-            else {
-                if(noteId == -1L) viewModel.addNewData(title, description)
-                else viewModel.updateData(noteId, title, description)
-                onBackPressed()
-            }
+        binding.galleryBtn.setOnClickListener {
+            //val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            resultLauncher.launch("image/*")
         }
 
 
@@ -97,10 +135,6 @@ class AddActivity : AppCompatActivity() {
                 this.type = "text/plain"
             }
             startActivity(intent)
-        }
-
-        binding.backBtn.setOnClickListener {
-            onBackPressed()
         }
 
         binding.dataDesc.let { editText->
@@ -121,22 +155,42 @@ class AddActivity : AppCompatActivity() {
             }
         }
 
+    }
 
+    private fun saveData() {
+        val title = binding.dataTitle.text?.toHtml()
+        val description = binding.dataDesc.text?.toHtml()
 
+        if(title.isNullOrEmpty()) binding.dataTitle.error = "Title cannot be empty"
+        else {
+            if(noteId == -1L) viewModel.addNewData(title, description)
+            else viewModel.updateData(noteId, title, description)
+            startActivity(Intent(this, MainActivity::class.java))
+        }
     }
 
 
-    private fun initData() {
+    private fun init() {
         val dataSource = ContentDatabase.getDatabase(this).dataDao()
         val repo = DataRepo(dataSource)
         val factory = DatabaseViewModelFactory(repo, application)
         viewModel = ViewModelProvider(this, factory).get(DataViewModel::class.java)
 
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        binding.toolbar.setNavigationOnClickListener { onBackPressed() }
+    }
+
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
-        startActivity(Intent(this, MainActivity::class.java))
+        saveData()
     }
 
 }

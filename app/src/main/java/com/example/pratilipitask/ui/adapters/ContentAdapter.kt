@@ -10,6 +10,7 @@ import com.example.pratilipitask.R
 import com.example.pratilipitask.data.entities.Data
 import com.example.pratilipitask.databinding.ViewDataBinding
 import com.example.pratilipitask.listeners.OnNoteClickListener
+import com.example.pratilipitask.utils.UtilFunctions.fromHtml
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,13 +20,13 @@ class ContentAdapter(listener: OnNoteClickListener) : RecyclerView.Adapter<Conte
     private var dataList: List<Data> = mutableListOf()
     private var listener: OnNoteClickListener = listener
 
-    inner class ViewHolder(val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root) {
         fun onBind(holder: ViewHolder, position: Int) {
             with(holder) {
                 with(dataList[position]) {
-                    binding.titleText.text = this.title
+                    binding.titleText.text = this.title.fromHtml()
                     this.description?.let {
-                        binding.descriptionText.text = this.description
+                        binding.descriptionText.text = this.description.fromHtml()
                     }
 
                     binding.parentLay.setOnClickListener {

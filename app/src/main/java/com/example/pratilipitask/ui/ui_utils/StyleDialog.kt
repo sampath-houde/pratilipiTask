@@ -3,6 +3,7 @@ package com.example.pratilipitask.ui.ui_utils
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Typeface
+import android.text.Html
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.StrikethroughSpan

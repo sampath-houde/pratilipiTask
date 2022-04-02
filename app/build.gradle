@@ -64,4 +64,6 @@ dependencies {
     //RoundImageView
     implementation 'com.makeramen:roundedimageview:2.3.0'
 
+    implementation 'androidx.core:core:1.0.1'
+
 }

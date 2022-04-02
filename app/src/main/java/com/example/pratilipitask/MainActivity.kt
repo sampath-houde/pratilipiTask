@@ -23,20 +23,32 @@ import com.example.pratilipitask.ui.adapters.ContentAdapter
 import com.example.pratilipitask.ui.viewmodels.DataViewModel
 import com.example.pratilipitask.utils.Constants
 import com.example.pratilipitask.utils.DatabaseViewModelFactory
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import java.util.*
+import kotlin.coroutines.CoroutineContext
 
 
-class MainActivity : AppCompatActivity(), OnNoteClickListener {
+class MainActivity : AppCompatActivity(), OnNoteClickListener,CoroutineScope {
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: DataViewModel
     private lateinit var contentAdapter: ContentAdapter
+    private lateinit var job: Job
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        job = Job()
 
         initData()
         initClickListeners()
@@ -46,41 +58,45 @@ class MainActivity : AppCompatActivity(), OnNoteClickListener {
     private fun initObservers() {
 
         viewModel.fetchData()
-        viewModel.readAllData.observe(this) { list->
 
-            if(list.isEmpty()) {
-                binding.emptyBanner.visibility = View.VISIBLE
-                binding.searchView.visibility = View.GONE
-                binding.recyclerView.visibility = View.GONE
-            } else {
-                binding.emptyBanner.visibility = View.GONE
-                binding.searchView.visibility = View.VISIBLE
-                binding.recyclerView.visibility = View.VISIBLE
-            }
-            contentAdapter.setData(list)
+        launch {
+            viewModel.readAllData.collect { list->
 
-            binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
-                override fun onQueryTextSubmit(p0: String?): Boolean {
-                    return false
+                if(list.isEmpty()) {
+                    binding.emptyBanner.visibility = View.VISIBLE
+                    binding.searchView.visibility = View.GONE
+                    binding.recyclerView.visibility = View.GONE
+                } else {
+                    binding.emptyBanner.visibility = View.GONE
+                    binding.searchView.visibility = View.VISIBLE
+                    binding.recyclerView.visibility = View.VISIBLE
                 }
+                contentAdapter.setData(list)
 
-                override fun onQueryTextChange(p0: String?): Boolean {
-                    val tempArr = ArrayList<Data>()
-
-                    for(data in list){
-                        if (data.title.lowercase(Locale.getDefault()).trim()
-                                .contains(p0.toString()) || data.description?.lowercase(
-                                Locale.getDefault()
-                            )?.trim()?.contains(p0.toString())!!
-                        ) {
-                            tempArr.add(data)
-                        }
+                binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+                    override fun onQueryTextSubmit(p0: String?): Boolean {
+                        return false
                     }
-                    contentAdapter.setData(tempArr)
-                    return false
-                }
-            })
+
+                    override fun onQueryTextChange(p0: String?): Boolean {
+                        val tempArr = ArrayList<Data>()
+
+                        for(data in list){
+                            if (data.title.lowercase(Locale.getDefault()).trim()
+                                    .contains(p0.toString()) || data.description?.lowercase(
+                                    Locale.getDefault()
+                                )?.trim()?.contains(p0.toString())!!
+                            ) {
+                                tempArr.add(data)
+                            }
+                        }
+                        contentAdapter.setData(tempArr)
+                        return false
+                    }
+                })
+            }
         }
+
     }
 
 
@@ -88,6 +104,11 @@ class MainActivity : AppCompatActivity(), OnNoteClickListener {
         binding.fabBtn.setOnClickListener {
             startActivity(Intent(this, AddActivity::class.java))
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
     }
 
     private fun initData() {
