@@ -2,23 +2,17 @@ package com.example.pratilipitask.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.example.pratilipitask.R
 import com.example.pratilipitask.data.entities.Data
 import com.example.pratilipitask.databinding.ViewDataBinding
-import com.example.pratilipitask.listeners.OnNoteClickListener
+import com.example.pratilipitask.ui.ui_utils.NoteDiffUtil
 import com.example.pratilipitask.utils.UtilFunctions.fromHtml
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
-class ContentAdapter(listener: OnNoteClickListener) : RecyclerView.Adapter<ContentAdapter.ViewHolder>() {
 
-    private var dataList: List<Data> = mutableListOf()
-    private var listener: OnNoteClickListener = listener
+class ContentAdapter(val listener: (Long)->Unit) : RecyclerView.Adapter<ContentAdapter.ViewHolder>() {
+
+    private var dataList: MutableList<Data> = mutableListOf()
 
     inner class ViewHolder(private val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root) {
         fun onBind(holder: ViewHolder, position: Int) {
@@ -30,7 +24,7 @@ class ContentAdapter(listener: OnNoteClickListener) : RecyclerView.Adapter<Conte
                     }
 
                     binding.parentLay.setOnClickListener {
-                        listener.onNoteClicked(this.id)
+                        listener(this.id)
                     }
                 }
             }
@@ -38,8 +32,12 @@ class ContentAdapter(listener: OnNoteClickListener) : RecyclerView.Adapter<Conte
     }
 
     fun setData(list: List<Data>) {
-        dataList = list
-        notifyDataSetChanged()
+        val diffCallback = NoteDiffUtil(oldList = dataList, newList = list)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+
+        dataList.clear()
+        dataList.addAll(list)
+        diffResult.dispatchUpdatesTo(this)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

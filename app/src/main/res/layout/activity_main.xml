@@ -8,25 +8,27 @@
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolBar"
-        android:elevation="1dp"
-        app:title="Notes"
-        app:titleTextColor="@color/white"
-        android:background="@color/purple_500"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/searchView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/toolBar" />
+        android:background="@color/purple_500"
+        android:elevation="1dp"
+        app:title="Notes"
+        app:titleTextColor="@color/white">
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/searchView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end" />
+
+    </com.google.android.material.appbar.MaterialToolbar>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
-        android:padding="@dimen/_3sdp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/searchView"
+        android:layout_below="@id/toolBar"
+        android:padding="@dimen/_3sdp"
         app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
         app:spanCount="2" />
 

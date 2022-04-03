@@ -30,7 +30,6 @@ class StyleDialog(val context: Context, val editText: TextInputEditText) {
     private var builder: AlertDialog.Builder? = null
     private var dialog: AlertDialog? = null
     private var inputText = editText.text.toString()
-    private var styleText: MutableLiveData<String> = MutableLiveData()
 
     object StyleSpan {
         val BOLD = StyleSpan(Typeface.BOLD)
@@ -96,8 +95,7 @@ class StyleDialog(val context: Context, val editText: TextInputEditText) {
             val spannable = SpannableStringBuilder(inputText)
             var textStyle: Any? = null
             var colorStyle: Any = ForegroundColorSpan(editText.currentTextColor)
-            val sStype = dialogBinding.dropDown.text.toString()
-            val selectedTextStyle = Styles.valueOf(sStype)
+            val selectedTextStyle = Styles.valueOf(dialogBinding.dropDown.text.toString())
             when(selectedTextStyle) {
                 Styles.Bold -> textStyle = StyleSpan.BOLD
                 Styles.Italic -> textStyle = StyleSpan.ITALIC

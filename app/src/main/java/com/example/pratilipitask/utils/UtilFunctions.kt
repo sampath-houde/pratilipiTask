@@ -7,6 +7,7 @@ import android.graphics.Matrix
 import android.text.Editable
 import android.text.Html
 import android.text.Spanned
+import android.text.style.ImageSpan
 import android.view.View
 import android.widget.Toast
 import androidx.core.text.HtmlCompat
@@ -45,6 +46,10 @@ object UtilFunctions {
 
     fun View.toast(message: String) {
         Toast.makeText(this.context, message, Toast.LENGTH_SHORT).show()
+    }
+
+    fun Bitmap.span(): ImageSpan {
+        return ImageSpan(this, ImageSpan.ALIGN_BASELINE)
     }
 
     fun Activity.toast(message: String) {
