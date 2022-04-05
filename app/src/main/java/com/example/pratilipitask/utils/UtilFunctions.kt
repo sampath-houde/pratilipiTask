@@ -11,8 +11,13 @@ import android.text.style.ImageSpan
 import android.view.View
 import android.widget.Toast
 import androidx.core.text.HtmlCompat
+import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
+import com.example.pratilipitask.data.entities.ImageMetaData
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import java.io.ByteArrayOutputStream
+
 
 object UtilFunctions {
 
@@ -30,6 +35,34 @@ object UtilFunctions {
             return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
         }
     }
+
+    public class ImageMetaDataListConvertor {
+        @TypeConverter
+        fun fromImageMetaDataListConvertor(metaData: List<ImageMetaData>?) : String {
+            return Gson().toJson(metaData)
+        }
+
+        @TypeConverter
+        fun toImageMetaDataList(value: String?) : List<ImageMetaData> {
+            val listType = object : TypeToken<ArrayList<String?>?>() {}.type
+            return Gson().fromJson(value, listType)
+        }
+    }
+
+    public class ImageMetaDataConvertor {
+        @TypeConverter
+        fun fromImageMetaDataConvertor(metaData: ImageMetaData) : String {
+            return Gson().toJson(metaData)
+        }
+
+        @TypeConverter
+        fun toImageMetaData(value: String) : ImageMetaData {
+            val listType = object : TypeToken<String?>() {}.type
+            return Gson().fromJson(value, listType)
+        }
+    }
+
+
 
     fun View.gone(boolean: Boolean) {
         if(boolean) View.GONE
@@ -68,6 +101,8 @@ object UtilFunctions {
         this.recycle()
         return resizedBitmap
     }
+
+
 
 
 }

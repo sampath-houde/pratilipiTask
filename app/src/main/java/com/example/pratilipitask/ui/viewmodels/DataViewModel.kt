@@ -4,6 +4,7 @@ import android.app.Application
 import android.graphics.Bitmap
 import androidx.lifecycle.*
 import com.example.pratilipitask.data.entities.Data
+import com.example.pratilipitask.data.entities.ImageMetaData
 import com.example.pratilipitask.data.repo.DataRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -25,13 +26,13 @@ class DataViewModel(private val repo: DataRepo, application: Application) : Andr
         }
     }
 
-    fun addNewData(title: String, description: String?) = viewModelScope.launch(Dispatchers.IO) {
-        val data = Data(0, title, description)
+    fun addNewData(title: String, description: String?, metaList: List<ImageMetaData>) = viewModelScope.launch(Dispatchers.IO) {
+        val data = Data(0, title, description, metaList)
         repo.addNewData(data)
     }
 
-    fun updateData(id: Long, title: String, description: String?) = viewModelScope.launch(Dispatchers.IO) {
-        val data = Data(id, title, description)
+    fun updateData(id: Long, title: String, description: String?,metaList: List<ImageMetaData>) = viewModelScope.launch(Dispatchers.IO) {
+        val data = Data(id, title, description, metaList)
         repo.updateData(data)
     }
 

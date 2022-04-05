@@ -10,5 +10,12 @@ data class Data(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
     val title: String,
-    val description: String?
+    val description: String?,
+    val imagePos: List<ImageMetaData>?
+)
+
+data class ImageMetaData(
+    val image: Bitmap,
+    val isTitle: Boolean,
+    val position: Int,
 )

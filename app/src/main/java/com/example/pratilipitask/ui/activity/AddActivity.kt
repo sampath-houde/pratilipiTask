@@ -1,28 +1,24 @@
 package com.example.pratilipitask.ui.activity
 
-import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.MediaStore
-import android.text.Html
+import android.text.Editable
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ImageSpan
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
-import androidx.core.text.HtmlCompat
+import androidx.core.text.toSpannable
 import androidx.lifecycle.ViewModelProvider
 import com.example.pratilipitask.MainActivity
 import com.example.pratilipitask.R
 import com.example.pratilipitask.data.database.ContentDatabase
 import com.example.pratilipitask.data.entities.Data
+import com.example.pratilipitask.data.entities.ImageMetaData
 import com.example.pratilipitask.data.repo.DataRepo
 import com.example.pratilipitask.databinding.ActivityAddBinding
 import com.example.pratilipitask.ui.ui_utils.StyleDialog
@@ -34,7 +30,6 @@ import com.example.pratilipitask.utils.UtilFunctions.gone
 import com.example.pratilipitask.utils.UtilFunctions.resize
 import com.example.pratilipitask.utils.UtilFunctions.span
 import com.example.pratilipitask.utils.UtilFunctions.toHtml
-import com.example.pratilipitask.utils.UtilFunctions.toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.CoroutineScope
@@ -50,7 +45,7 @@ class AddActivity() : AppCompatActivity(), CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
-
+    private var metaDataList = mutableListOf<ImageMetaData>()
     private lateinit var job: Job
     private lateinit var binding: ActivityAddBinding
     private lateinit var viewModel: DataViewModel
@@ -69,11 +64,18 @@ class AddActivity() : AppCompatActivity(), CoroutineScope {
         activeEditText { editText->
             editText?.let {
                 val spannable = SpannableStringBuilder(editText.text).apply {
+                    val startIndex = editText.selectionStart
+                    val endIndex = editText.selectionStart+1
                     try {
-                        setSpan(image.span(), editText.selectionStart,editText.selectionStart+1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                        setSpan(image.span(), startIndex,endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                     } catch (e: Exception) {
                         setSpan(image.span(), editText.text!!.length-2,editText.text!!.length-1, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
                     }
+                    ImageMetaData(
+                        image = image,
+                        isTitle = editText.id == R.id.data_title,
+                        position = startIndex
+                    ).apply { metaDataList.add(this) }
                 }
                 editText.text = spannable
             }
@@ -186,9 +188,23 @@ class AddActivity() : AppCompatActivity(), CoroutineScope {
 
         if(title.isNullOrEmpty()) binding.dataTitle.error = "Title cannot be empty"
         else {
-            if(noteId == -1L) viewModel.addNewData(title.toHtml()!!, description?.toHtml())
-            else viewModel.updateData(noteId, title.toHtml()!!, description?.toHtml())
+            //addImageMetaData(title, description)
+            if(noteId == -1L) viewModel.addNewData(title.toHtml()!!, description?.toHtml(), metaDataList)
+            else viewModel.updateData(noteId, title.toHtml()!!, description?.toHtml(), metaDataList)
             onBackPressed()
+        }
+    }
+
+    //To check if the current
+    private fun addImageMetaData(title: Editable, description: Editable?) {
+        metaDataList.forEach {
+            if(it.isTitle) {
+                val bool = title.toString().substring(it.position, it.position+1).toSpannable() is ImageSpan
+                if(!bool) metaDataList.remove(it)
+            } else {
+                val bool = description?.toString()?.substring(it.position, it.position+1)?.toSpannable() is ImageSpan
+                if(!bool) metaDataList.remove(it)
+            }
         }
     }
 

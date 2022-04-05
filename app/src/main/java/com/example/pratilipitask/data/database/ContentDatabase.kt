@@ -10,7 +10,7 @@ import com.example.pratilipitask.data.entities.Data
 import com.example.pratilipitask.utils.Constants
 import com.example.pratilipitask.utils.UtilFunctions
 
-@TypeConverters(UtilFunctions.BitmapConvertor::class)
+@TypeConverters(UtilFunctions.BitmapConvertor::class, UtilFunctions.ImageMetaDataConvertor::class, UtilFunctions.ImageMetaDataListConvertor::class)
 @Database(entities = [Data::class], version = 1, exportSchema = false )
 abstract class ContentDatabase: RoomDatabase() {
     abstract fun dataDao(): DataDao
@@ -29,7 +29,8 @@ abstract class ContentDatabase: RoomDatabase() {
                     context.applicationContext,
                     ContentDatabase::class.java,
                     Constants.DATABASE_NAME
-                ).build()
+                )
+                    .build()
                 INSTANCE = instance
                 return instance
             }
